@@ -16,7 +16,7 @@ pip3 install -U telemongo
 
 ## Usage
 
-```
+```python
 from telemongo import MongoSession
 from telethon import TelegramClient
 
