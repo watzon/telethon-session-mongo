@@ -149,7 +149,7 @@ class MongoSession(MemorySession):
                 sess.delete()
 
     @classmethod
-    def list_sessions(cls):
+    def list_sessions(self, cls):
         with switch_db(Session, self.database) as _Session:
             return _Session.objects
 
@@ -171,27 +171,32 @@ class MongoSession(MemorySession):
 
     def get_entity_rows_by_phone(self, phone):
         with switch_db(Entity, self.database) as _Entity:
-            return _Entity.objects(phone=phone)
+            ent = _Entity.objects(phone=phone).first()
+            return (ent.id, ent.hash)
 
     def get_entity_rows_by_username(self, username):
         with switch_db(Entity, self.database) as _Entity:
-            return _Entity.objects(username=username)
+            ent = _Entity.objects(username=username).first()
+            return (ent.id, ent.hash)
 
     def get_entity_rows_by_name(self, name):
         with switch_db(Entity, self.database) as _Entity:
-            return _Entity.objects(name=name)
+            ent = _Entity.objects(name=name).first()
+            return (ent.id, ent.hash)
 
     def get_entity_rows_by_id(self, id, exact=True):
         with switch_db(Entity, self.database) as _Entity:
             if exact:
-                return _Entity.objects(id=id)
+                ent =  _Entity.objects(id=id).first()
+                return (ent.id, ent.hash)
             else:
                 ids = (
                     utils.get_peer_id(PeerUser(id)),
                     utils.get_peer_id(PeerChat(id)),
                     utils.get_peer_id(PeerChannel(id))
                 )
-                return _Entity.objects(id__in=ids)
+                ent = _Entity.objects(id__in=ids).first()
+                return (ent.id, ent.hash)
 
     def get_file(self, md5_digest, file_size, cls):
         with switch_db(SentFile, self.database) as _SentFile:
