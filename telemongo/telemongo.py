@@ -171,49 +171,67 @@ class MongoSession(MemorySession):
 
     def get_entity_rows_by_phone(self, phone):
         with switch_db(Entity, self.database) as _Entity:
-            ent = _Entity.objects(phone=phone).first()
-            return (ent.id, ent.hash)
+            try:
+                ent = _Entity.objects(phone=phone).first()
+                return (ent.id, ent.hash)
+            except:
+                pass
 
     def get_entity_rows_by_username(self, username):
         with switch_db(Entity, self.database) as _Entity:
-            ent = _Entity.objects(username=username).first()
-            return (ent.id, ent.hash)
+            try:
+                ent = _Entity.objects(username=username).first()
+                return (ent.id, ent.hash)
+            except:
+                pass
 
     def get_entity_rows_by_name(self, name):
         with switch_db(Entity, self.database) as _Entity:
-            ent = _Entity.objects(name=name).first()
-            return (ent.id, ent.hash)
+            try:
+                ent = _Entity.objects(name=name).first()
+                return (ent.id, ent.hash)
+            except:
+                pass
 
     def get_entity_rows_by_id(self, id, exact=True):
         with switch_db(Entity, self.database) as _Entity:
-            if exact:
-                ent =  _Entity.objects(id=id).first()
-                return (ent.id, ent.hash)
-            else:
-                ids = (
-                    utils.get_peer_id(PeerUser(id)),
-                    utils.get_peer_id(PeerChat(id)),
-                    utils.get_peer_id(PeerChannel(id))
-                )
-                ent = _Entity.objects(id__in=ids).first()
-                return (ent.id, ent.hash)
+            try:
+                if exact:
+                    ent =  _Entity.objects(id=id).first()
+                    return (ent.id, ent.hash)
+                else:
+                    ids = (
+                        utils.get_peer_id(PeerUser(id)),
+                        utils.get_peer_id(PeerChat(id)),
+                        utils.get_peer_id(PeerChannel(id))
+                    )
+                    ent = _Entity.objects(id__in=ids).first()
+                    return (ent.id, ent.hash)
+            except:
+                pass
 
     def get_file(self, md5_digest, file_size, cls):
         with switch_db(SentFile, self.database) as _SentFile:
-            row = _SentFile.objects(md5_digest=md5_digest,
-                                   file_size=file_size,
-                                   type=_SentFileType.from_type(cls).value).first()
+            try:
+                row = _SentFile.objects(md5_digest=md5_digest,
+                                    file_size=file_size,
+                                    type=_SentFileType.from_type(cls).value).first()
 
-        if row:
-            return cls(row.id, row.hash)
+                if row:
+                    return cls(row.id, row.hash)
+            except:
+                pass
 
     def cache_file(self, md5_digest, file_size, instance):
         with switch_db(SentFile, self.database) as _SentFile:
-            if not isinstance(instance, (InputDocument, InputPhoto)):
-                raise TypeError('Cannot cache %s instance' % type(instance))
+            try:
+                if not isinstance(instance, (InputDocument, InputPhoto)):
+                    raise TypeError('Cannot cache %s instance' % type(instance))
 
-            _SentFile(md5_digest=md5_digest,
-                      file_size=file_size,
-                      type=_SentFileType.from_type(type(instance)).value,
-                      id=instance.id,
-                      hash=instance.access_hash).save()
+                _SentFile(md5_digest=md5_digest,
+                        file_size=file_size,
+                        type=_SentFileType.from_type(type(instance)).value,
+                        id=instance.id,
+                        hash=instance.access_hash).save()
+            except:
+                pass
