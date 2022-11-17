@@ -130,11 +130,11 @@ class MongoSession(MemorySession):
 
     def set_update_state(self, entity_id, state):
         with switch_db(UpdateState, self.database) as _UpdateState:
-            return _UpdateState(entity_id=entity_id,
+            return _UpdateState(id=entity_id,
                                pts=state.pts,
                                qts=state.qts,
                                date=state.date.timestamp(),
-                               seq=state.seq()).save()
+                               seq=state.seq).save()
 
     def save(self):
         pass
