@@ -134,7 +134,7 @@ class MongoSession(MemorySession):
                                pts=state.pts,
                                qts=state.qts,
                                date=state.date.timestamp(),
-                               seq=state.seq()).save()
+                               seq=state.seq).save()
 
     def save(self):
         pass
