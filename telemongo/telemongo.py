@@ -70,7 +70,6 @@ class MongoSession(MemorySession):
         # See if we have any previous sessions
         with switch_db(Session, database) as _Session:
             session_count = _Session.objects.count()
-            print(session_count)
             if session_count > 0:
                 session = _Session.objects.first()
                 self._dc_id = session.dc_id
