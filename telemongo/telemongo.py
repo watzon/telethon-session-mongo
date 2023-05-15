@@ -162,12 +162,15 @@ class MongoSession(MemorySession):
                 return
 
             for row in rows:
-                _Entity(id=row[0],
-                        hash=row[1],
-                        username=row[2],
-                        phone=row[3],
-                        name=row[4]).save()
-
+                try:
+                    _Entity(id=row[0],
+                            hash=row[1],
+                            username=row[2],
+                            phone=row[3],
+                            name=row[4]).save(force_insert=True)
+                except Exception as saveErr:
+                    print('Duplicate or some error in saving entity in mongo session',saveErr)
+                    pass
     def get_entity_rows_by_phone(self, phone):
         with switch_db(Entity, self.database) as _Entity:
             try:
