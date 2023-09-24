@@ -169,7 +169,8 @@ class MongoSession(MemorySession):
                             phone=row[3],
                             name=row[4]).save(force_insert=True)
                 except Exception as saveErr:
-                    print('Duplicate or some error in saving entity in mongo session',saveErr)
+                    if 'E11000' not in str(saveErr):
+                        print('Some error in saving entity in mongo session',saveErr)
                     pass
     def get_entity_rows_by_phone(self, phone):
         with switch_db(Entity, self.database) as _Entity:
