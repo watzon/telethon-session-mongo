@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "telemongo"
+version = "0.2.2"
+description = "MongoDB backend for Telethon session storage"
+authors = ["Chris W <cawatson1993@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+mongoengine = "^0.27.0"
+Telethon = "^1.31.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

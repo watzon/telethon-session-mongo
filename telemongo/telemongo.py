@@ -1,3 +1,4 @@
+import logging
 import datetime
 
 from mongoengine.context_managers import switch_db
@@ -46,6 +47,7 @@ class Version(Document):
 class MongoSession(MemorySession):
     def __init__(self, database, **kwargs):
         super().__init__()
+        self.logger = logging.getLogger(__name__)
         self.save_entities = True
         self.database = database
 
@@ -223,14 +225,11 @@ class MongoSession(MemorySession):
 
     def cache_file(self, md5_digest, file_size, instance):
         with switch_db(SentFile, self.database) as _SentFile:
-            try:
-                if not isinstance(instance, (InputDocument, InputPhoto)):
-                    raise TypeError('Cannot cache %s instance' % type(instance))
+            if not isinstance(instance, (InputDocument, InputPhoto)):
+                raise TypeError('Cannot cache %s instance' % type(instance))
 
-                _SentFile(md5_digest=md5_digest,
-                        file_size=file_size,
-                        type=_SentFileType.from_type(type(instance)).value,
-                        id=instance.id,
-                        hash=instance.access_hash).save()
-            except:
-                pass
+            _SentFile(md5_digest=md5_digest,
+                    file_size=file_size,
+                    type=_SentFileType.from_type(type(instance)).value,
+                    id=instance.id,
+                    hash=instance.access_hash).save()
