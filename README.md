@@ -27,12 +27,15 @@ poetry add -U telemongo mongoengine
 ```python
 from telemongo import MongoSession
 from telethon import TelegramClient
+from mongoengine import connect
 
 api_id = 12345
 api_hash = "0123456789abcdef0123456789abcdef"
-host = "mongo://username:pass@mongo_host/dbname"
+db = "dbname"
+host = f"mongodb://username:pass@mongo_host/{dbname}"
 
-session = MongoSession(host=host)
+connect(db, host=host)
+session = MongoSession(db, host=host)
 
 client = TelegramClient(session, api_id, api_hash)
 client.start()
